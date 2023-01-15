@@ -46,3 +46,13 @@ for name,param in model.named_parameters():
 # y.backward()
 # print(x.grad)
 # print(torch.cuda.is_available())
+
+print("--------------------")
+x = torch.arange(3,dtype=torch.float32, requires_grad=True)
+a = x+2
+b = a**2
+c = b + 3
+y = c.mean()
+print(y)
+y.backward()
+print(x.grad)
