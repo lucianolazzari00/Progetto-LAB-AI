@@ -19,6 +19,7 @@ model = ClassifierEasy(2,4,1)
 print(model)
 
 for name,param in model.named_parameters():
+    #prova
     print(name)
     print("--")
     print(param.shape)
