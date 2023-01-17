@@ -1,8 +1,15 @@
+import sys
 import torch
 import torch.nn as nn
 import torch.nn.functional as F 
 import torch.utils.data as data
 from tqdm import tqdm
+
+try:
+    exec_mode = sys.argv[1]
+except IndexError:
+    print("Error! missing one argument \n -usage: NNclassifier.py [TRAIN|LOAD]")
+    exit(0)
 
 class ClassifierEasy(nn.Module):
     def __init__(self,n_in,n_hid,n_out):
@@ -111,11 +118,6 @@ def eval_model(model, data_loader):
     acc = true_preds / num_preds
     print(f"Accuracy of the model: {100.0*acc:4.2f}%")
 
-###--- initializing model ---###
-
-model = ClassifierEasy(2,4,1)
-print(model)
-
 ###--- initializing ds ---###
 
 train_dataset = XORDataset(size=3000)
@@ -125,13 +127,33 @@ print("Size of dataset:", len(train_dataset))
 
 train_data_loader = data.DataLoader(train_dataset, batch_size=128, shuffle=True)
 
-###--- TRAINING ---###
+if exec_mode == "TRAIN":
+    ###--- initializing model ---###
 
-loss_module = nn.BCEWithLogitsLoss()
+    model = ClassifierEasy(2,4,1)
+    print(model)
 
-optimizer = torch.optim.SGD(model.parameters(), lr=0.2)
+    ###--- TRAINING ---###
 
-train_model(model, optimizer, train_data_loader, loss_module)
+    loss_module = nn.BCEWithLogitsLoss()
+
+    optimizer = torch.optim.SGD(model.parameters(), lr=0.2)
+
+    train_model(model, optimizer, train_data_loader, loss_module)
+
+     ###--- SAVING MODEL ---###
+    state_dict = model.state_dict()
+    print(state_dict)
+
+    torch.save(state_dict, "xor_model.tar")
+
+if exec_mode == "LOAD":
+    # Load state dict from the disk (make sure it is the same name as above)
+    state_dict = torch.load("xor_model.tar")
+
+    # Create a new model and load the state
+    model = ClassifierEasy(2, 4, 1)
+    model.load_state_dict(state_dict)
 
 ###---TESTING---###
 
@@ -142,11 +164,6 @@ test_data_loader = data.DataLoader(test_dataset, batch_size=128, shuffle=False, 
 eval_model(model, test_data_loader)
 
 
-###--- SAVING MODEL ---###
-state_dict = model.state_dict()
-print(state_dict)
-
-torch.save(state_dict, "xor_model.tar")
 
 
 
