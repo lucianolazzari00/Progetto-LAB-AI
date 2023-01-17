@@ -19,7 +19,6 @@ class ClassifierEasy(nn.Module):
 
 
 
-
 class XORDataset(data.Dataset):
 
     def __init__(self, size, std=0.1):
@@ -58,33 +57,6 @@ class XORDataset(data.Dataset):
 
 
 
-model = ClassifierEasy(2,4,1)
-print(model)
-
-for name,param in model.named_parameters():
-    #prova
-    print(name)
-    print("--")
-    print(param.shape)
-
-train_dataset = XORDataset(size=3000)
-print("Size of dataset:", len(train_dataset))
-
-#initializing data loader
-train_data_loader = data.DataLoader(train_dataset, batch_size=128, shuffle=True)
-#iterate over the ds trough the data loader
-# i=0
-# for batch in data_loader:
-#     print("batch n: ", i)
-#     i+=1
-#     data_inputs, data_labels = next(iter(data_loader))
-#     print("Data inputs", data_inputs.shape, "\n", data_inputs)
-#     print("Data labels", data_labels.shape, "\n", data_labels)
-
-
-loss_module = nn.BCEWithLogitsLoss()
-
-optimizer = torch.optim.SGD(model.parameters(), lr=0.2)
 
 ### training phase ###
 
@@ -117,11 +89,6 @@ def train_model(model, optimizer, data_loader, loss_module, num_epochs=100):
             ## Step 5: Update the parameters
             optimizer.step()
 
-train_model(model, optimizer, train_data_loader, loss_module)
-
-test_dataset = XORDataset(size=500)
-# drop_last -> Don't drop the last batch although it is smaller than 128
-test_data_loader = data.DataLoader(test_dataset, batch_size=128, shuffle=False, drop_last=False) 
 
 def eval_model(model, data_loader):
     model.eval() # Set model to eval mode
@@ -144,4 +111,58 @@ def eval_model(model, data_loader):
     acc = true_preds / num_preds
     print(f"Accuracy of the model: {100.0*acc:4.2f}%")
 
+###--- initializing model ---###
+
+model = ClassifierEasy(2,4,1)
+print(model)
+
+###--- initializing ds ---###
+
+train_dataset = XORDataset(size=3000)
+print("Size of dataset:", len(train_dataset))
+
+###--- initializing data loader ---###
+
+train_data_loader = data.DataLoader(train_dataset, batch_size=128, shuffle=True)
+
+###--- TRAINING ---###
+
+loss_module = nn.BCEWithLogitsLoss()
+
+optimizer = torch.optim.SGD(model.parameters(), lr=0.2)
+
+train_model(model, optimizer, train_data_loader, loss_module)
+
+###---TESTING---###
+
+test_dataset = XORDataset(size=500)
+# drop_last -> Don't drop the last batch although it is smaller than 128
+test_data_loader = data.DataLoader(test_dataset, batch_size=128, shuffle=False, drop_last=False) 
+
 eval_model(model, test_data_loader)
+
+
+###--- SAVING MODEL ---###
+state_dict = model.state_dict()
+print(state_dict)
+
+torch.save(state_dict, "xor_model.tar")
+
+
+
+###Utils
+#for per i parametri
+# for name,param in model.named_parameters():
+#     #prova
+#     print(name)
+#     print("--")
+#     print(param.shape)
+
+# iterate over the ds trough the data loader
+# i=0
+# for batch in data_loader:
+#     print("batch n: ", i)
+#     i+=1
+#     data_inputs, data_labels = next(iter(data_loader))
+#     print("Data inputs", data_inputs.shape, "\n", data_inputs)
+#     print("Data labels", data_labels.shape, "\n", data_labels)
