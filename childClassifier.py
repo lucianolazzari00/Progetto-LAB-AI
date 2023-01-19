@@ -35,13 +35,15 @@ testset = datasets.MNIST('~/.pytorch/MNIST_data/', download=False, train=False, 
 test_loader = DataLoader(testset, batch_size=64, shuffle=True)
 
 class MLP(nn.Module):
-    def __init__(self,n_in=784 ,n_out=10, hidden = [128,64]):
+    def __init__(self,n_in=784 ,n_out=2, hidden = [256,128,64]):
         super().__init__()
         self.linear1 = nn.Linear(n_in,hidden[0])
         self.l1_drop = nn.Dropout(0.2)
         self.linear2 = nn.Linear(hidden[0],hidden[1])
         self.l2_drop = nn.Dropout(0.2)
-        self.linear3 = nn.Linear(hidden[1],n_out)
+        self.linear3 = nn.Linear(hidden[1],hidden[2])
+        self.l3_drop = nn.Dropout(0.2)
+        self.linear4 = nn.Linear(hidden[2], n_out)
 
     def forward(self, x):
         x = self.linear1(x)
@@ -50,7 +52,10 @@ class MLP(nn.Module):
         x = self.linear2(x)
         x = F.relu(x)
         x = self.l2_drop(x)
-        return F.softmax(self.linear3(x), dim=1)
+        x = self.linear3(x)
+        x = F.relu(x)
+        x = self.l3_drop(x)
+        return F.softmax(self.linear4(x), dim=1)
 
 
 def train(epoch, log_interval=200):
