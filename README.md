@@ -1,2 +1,2 @@
 # Progetto-LAB-AI
-Facial recognition
+Facial detection and adult/child classification
