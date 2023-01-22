@@ -264,8 +264,9 @@ def main():
     
     if exec_mode == "LOAD":
         # Load state dict from the disk (make sure it is the same name as above)
-        #state_dict = torch.load("adch_model.tar", map_location=torch.device('cpu')) ####LEVA LA CPUU!! TODO
-        state_dict = torch.load("adch_model.tar")
+        state_dict = torch.load("adch_model.tar", map_location=torch.device('cpu')) ####LEVA LA CPUU!! TODO
+        #state_dict = torch.load("adch_model.tar")
+
         # Create a new model and load the state
         trained_model = ComplexCNN()
         trained_model.load_state_dict(state_dict)
