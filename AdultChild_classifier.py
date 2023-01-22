@@ -33,14 +33,17 @@ print(f'Running on device: {device}')
 ####### TODO: try different normalization
 data_transforms = {
     'train': transforms.Compose([
+        transforms.Resize((200,200)),
         transforms.ToTensor(),
         transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
     ]),
     'val': transforms.Compose([
+        transforms.Resize((200,200)),
         transforms.ToTensor(),
         transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
     ]),
     'test': transforms.Compose([
+        transforms.Resize((200,200)),
         transforms.ToTensor(),
         transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
     ]),
@@ -53,7 +56,7 @@ val_dataset = ImageFolder(os.path.join(data_dir, 'val'), data_transforms['val'])
 test_dataset = ImageFolder(os.path.join(data_dir, 'test'), data_transforms['test'])
 
 
-batch_size = 32
+batch_size = 16
 
 train_dataloader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
 val_dataloader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False)
@@ -261,11 +264,11 @@ def main():
     # Initialize the criterion (loss function)
     criterion = nn.CrossEntropyLoss()
     # Initialize the optimizer
-    optimizer = optim.Adam(model.parameters(), lr=0.01)
+    optimizer = optim.Adam(model.parameters(), lr=0.001)
 
     if exec_mode == "TRAIN":
         # Train the model
-        trained_model, train_losses, val_losses = train_model(model, train_dataloader, val_dataloader, criterion, optimizer, num_epochs=6)
+        trained_model, train_losses, val_losses = train_model(model, train_dataloader, val_dataloader, criterion, optimizer, num_epochs=10)
         # save the model
         state_dict = trained_model.state_dict()
         torch.save(state_dict, "adch_model.tar")
