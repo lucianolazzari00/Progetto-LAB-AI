@@ -25,8 +25,8 @@ else:
 ##=====import the model=======
 
 # Load state dict from the disk (make sure it is the same name as above)
-#state_dict = torch.load("adch_model.tar")
-state_dict = torch.load("adch_model.tar", map_location=torch.device('cpu')) ### TODO cambia la cpu
+state_dict = torch.load("adch_model.tar")
+#state_dict = torch.load("adch_model.tar", map_location=torch.device('cpu')) ### TODO cambia la cpu
 
 # Create a new model and load the state
 trained_model = ComplexCNN()
