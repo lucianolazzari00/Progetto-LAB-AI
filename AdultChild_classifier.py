@@ -124,6 +124,7 @@ def train_model(model, train_loader, val_loader, criterion, optimizer, num_epoch
                     print(f'curr loss: {running_loss/i*batch_size}')
             i+=1
             if i > 500:
+                print("[x] safe loop: BREAKING")
                 break
             inputs = inputs.to(device)
             labels = labels.to(device)
@@ -259,14 +260,14 @@ def main():
         trained_model, train_losses, val_losses = train_model(model, train_dataloader, val_dataloader, criterion, optimizer, num_epochs=4)
         # save the model
         state_dict = trained_model.state_dict()
-        torch.save(state_dict, "adch_1_model.tar")
+        torch.save(state_dict, "adch_model.tar")
         # Test the model
         test_model(trained_model, test_dataloader, criterion)
     
     if exec_mode == "LOAD":
         # Load state dict from the disk (make sure it is the same name as above)
-        state_dict = torch.load("adch_model.tar", map_location=torch.device('cpu')) ####LEVA LA CPUU!! TODO
-        #state_dict = torch.load("adch_model.tar")
+        #state_dict = torch.load("adch_1_model.tar", map_location=torch.device('cpu')) ####LEVA LA CPUU!! TODO
+        state_dict = torch.load("adch_model.tar")
 
         # Create a new model and load the state
         trained_model = ComplexCNN()
