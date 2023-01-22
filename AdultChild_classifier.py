@@ -14,6 +14,7 @@ import sys
 from torch.optim import lr_scheduler
 import random
 import time
+from PIL import Image
 
 try:
     exec_mode = sys.argv[1]
@@ -198,6 +199,7 @@ def demo(model):
     for images,labels in test_dataloader:
         images = images.to(device)
         labels = labels.to(device)
+        print(f'[-]shape: {images.shape}')
         #print(labels)
         for i in range(len(images)):
             image = images[i]
@@ -211,6 +213,35 @@ def demo(model):
             image = transforms.ToPILImage()(image)
             image.show()
         break
+
+##======PREDICTIONS=====
+
+data_transf = transforms.Compose([
+        transforms.Resize((200,200)),
+        transforms.ToTensor(),
+        transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
+    ])
+
+def predict(model, image, data_transform=data_transf):
+    # Preprocess the image
+    image = Image.fromarray(image)
+    image = data_transform(image)
+    
+    imagesh = transforms.ToPILImage()(image)
+    imagesh.show()
+    # Convert to a batch of size 1
+    #image = image.unsqueeze(0)
+    
+    # Move the input tensor to the appropriate device
+    image = image.to(device)
+    
+    # Forward pass
+    output = model(image)
+    print(output)
+    # Get the class with highest probability
+    _, pred = torch.max(output, 1)
+    
+    return pred.item()
 
 ##=========MAIN=========
 
@@ -233,15 +264,15 @@ def main():
     
     if exec_mode == "LOAD":
         # Load state dict from the disk (make sure it is the same name as above)
-        state_dict = torch.load("adch_model.tar")
+        state_dict = torch.load("adch_model.tar", map_location=torch.device('cpu')) ####LEVA LA CPUU!! TODO
 
         # Create a new model and load the state
         trained_model = ComplexCNN()
         trained_model.load_state_dict(state_dict)
         trained_model = trained_model.to(device)
-        test_model(trained_model, test_dataloader, criterion)
+        #test_model(trained_model, test_dataloader, criterion)
         
-        #demo(trained_model)
+        demo(trained_model)
     
 if __name__ == '__main__':
     main()
