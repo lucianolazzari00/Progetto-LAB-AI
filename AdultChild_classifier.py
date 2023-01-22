@@ -27,6 +27,7 @@ if torch.cuda.is_available():
 else:
     device = torch.device('cpu')
 
+print(f'Running on device: {device}')
 ##=======dataset=========
 
 ####### TODO: try different normalization
@@ -52,7 +53,7 @@ val_dataset = ImageFolder(os.path.join(data_dir, 'val'), data_transforms['val'])
 test_dataset = ImageFolder(os.path.join(data_dir, 'test'), data_transforms['test'])
 
 
-batch_size = 16
+batch_size = 32
 
 train_dataloader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
 val_dataloader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False)
@@ -117,12 +118,12 @@ def train_model(model, train_loader, val_loader, criterion, optimizer, num_epoch
         running_loss = 0.0
         i=0
         for inputs, labels in train_loader:
-            if i%100==0:
+            if i%500==0:
                 print(f'------------\ntraining: ..... {i}/18695')
                 if i!=0:
-                    print(f'curr loss: {running_loss/i}')
+                    print(f'curr loss: {running_loss/i*batch_size}')
             i+=1
-            if i >1000:
+            if i > 500:
                 break
             inputs = inputs.to(device)
             labels = labels.to(device)
@@ -199,7 +200,7 @@ def demo(model):
     for images,labels in test_dataloader:
         images = images.to(device)
         labels = labels.to(device)
-        print(f'[-]shape: {images.shape}')
+        #print(f'[-]shape: {images.shape}')
         #print(labels)
         for i in range(len(images)):
             image = images[i]
@@ -255,10 +256,10 @@ def main():
 
     if exec_mode == "TRAIN":
         # Train the model
-        trained_model, train_losses, val_losses = train_model(model, train_dataloader, val_dataloader, criterion, optimizer, num_epochs=2)
+        trained_model, train_losses, val_losses = train_model(model, train_dataloader, val_dataloader, criterion, optimizer, num_epochs=4)
         # save the model
         state_dict = trained_model.state_dict()
-        torch.save(state_dict, "adch_test_model.tar")
+        torch.save(state_dict, "adch_1_model.tar")
         # Test the model
         test_model(trained_model, test_dataloader, criterion)
     
