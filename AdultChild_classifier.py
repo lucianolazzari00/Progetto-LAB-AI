@@ -118,8 +118,8 @@ def train_model(model, train_loader, val_loader, criterion, optimizer, num_epoch
         running_loss = 0.0
         i=0
         for inputs, labels in train_loader:
-            if i%500==0:
-                print(f'------------\ntraining: ..... {i}/18695')
+            if i%20==0:
+                print(f'------------\ntraining: ..... {i}/{3700//batch_size}')
                 if i!=0:
                     print(f'curr loss: {running_loss/i*batch_size}')
             i+=1
@@ -177,6 +177,8 @@ def test_model(model, test_loader, criterion):
     test_loss = 0
     correct = 0
     total = 0
+    wzbo = 0
+    wobz = 0
     with torch.no_grad():
         for inputs, labels in test_loader:
             inputs = inputs.to(device)
@@ -189,10 +191,16 @@ def test_model(model, test_loader, criterion):
             correct += (predicted == labels).sum().item()
             for i in range(len(predicted)):
                 if(predicted[i]!=labels[i]):
-                    print(f'correct: {labels[i]} | predicted: {predicted[i]}')
+                    if labels[i]==0:
+                        wzbo+=1
+                    else:
+                        wobz+=1
+                    #print(f'correct: {labels[i]} | predicted: {predicted[i]}')
     test_loss /= len(test_loader)
     test_acc = correct / total
     print('Test Loss: {:.4f} Acc: {:.4f}'.format(test_loss, test_acc))
+    print(f'[x] 0 predicted as 1: {wzbo}')
+    print(f'[x] 1 predicted as 0: {wobz}')
     return test_loss, test_acc
 
 #start a little "demo":
@@ -253,11 +261,11 @@ def main():
     # Initialize the criterion (loss function)
     criterion = nn.CrossEntropyLoss()
     # Initialize the optimizer
-    optimizer = optim.Adam(model.parameters(), lr=0.001)
+    optimizer = optim.Adam(model.parameters(), lr=0.01)
 
     if exec_mode == "TRAIN":
         # Train the model
-        trained_model, train_losses, val_losses = train_model(model, train_dataloader, val_dataloader, criterion, optimizer, num_epochs=4)
+        trained_model, train_losses, val_losses = train_model(model, train_dataloader, val_dataloader, criterion, optimizer, num_epochs=6)
         # save the model
         state_dict = trained_model.state_dict()
         torch.save(state_dict, "adch_model.tar")
