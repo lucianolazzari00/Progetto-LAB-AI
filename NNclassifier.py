@@ -164,20 +164,6 @@ test_data_loader = data.DataLoader(test_dataset, batch_size=128, shuffle=False, 
 eval_model(model, test_data_loader)
 
 
-def activation(x):
-    return 1/(1+torch.exp(-x))
-
-inputs = images.view(images.shape[0],-1)
-
-w1 = torch.randn(784,256)
-b1 = torch.randn(256)
-
-w2 = torch.randn(256,10)
-b2 = torch.randn(10)
-
-h = activation(torch.mm(inputs, w1) + b1)
-out = torch.mm(h, w2) + b2
-
 ###Utils
 #for per i parametri
 # for name,param in model.named_parameters():
