@@ -122,9 +122,9 @@ def train_model(model, train_loader, val_loader, criterion, optimizer, num_epoch
         i=0
         for inputs, labels in train_loader:
             if i%20==0:
-                print(f'------------\ntraining: ..... {i}/{3700//batch_size}')
+                print(f'------------\ntraining: ..... {i}/{len(train_loader)}')
                 if i!=0:
-                    print(f'curr loss: {running_loss/i*batch_size}')
+                    print(f'curr loss: {running_loss/(i*batch_size)}')
             i+=1
             if i > 500:
                 print("[x] safe loop: BREAKING")
@@ -264,21 +264,21 @@ def main():
     # Initialize the criterion (loss function)
     criterion = nn.CrossEntropyLoss()
     # Initialize the optimizer
-    optimizer = optim.Adam(model.parameters(), lr=0.001)
+    optimizer = optim.Adam(model.parameters(), lr=0.0003)
 
     if exec_mode == "TRAIN":
         # Train the model
-        trained_model, train_losses, val_losses = train_model(model, train_dataloader, val_dataloader, criterion, optimizer, num_epochs=10)
+        trained_model, train_losses, val_losses = train_model(model, train_dataloader, val_dataloader, criterion, optimizer, num_epochs=12)
         # save the model
         state_dict = trained_model.state_dict()
-        torch.save(state_dict, "adch_model.tar")
+        torch.save(state_dict, "adch_model2.0.tar")
         # Test the model
         test_model(trained_model, test_dataloader, criterion)
     
     if exec_mode == "LOAD":
         # Load state dict from the disk (make sure it is the same name as above)
         #state_dict = torch.load("adch_1_model.tar", map_location=torch.device('cpu')) ####LEVA LA CPUU!! TODO
-        state_dict = torch.load("adch_model.tar")
+        state_dict = torch.load("adch_model2.0.tar")
 
         # Create a new model and load the state
         trained_model = ComplexCNN()
