@@ -241,7 +241,7 @@ def predict(model, image, data_transform=data_transf):
     image = data_transform(image)
     
     imagesh = transforms.ToPILImage()(image)
-    imagesh.show()
+    #imagesh.show()
     # Convert to a batch of size 1
     #image = image.unsqueeze(0)
     
@@ -250,7 +250,6 @@ def predict(model, image, data_transform=data_transf):
     
     # Forward pass
     output = model(image)
-    print(output)
     # Get the class with highest probability
     _, pred = torch.max(output, 1)
     
@@ -277,7 +276,7 @@ def main():
     
     if exec_mode == "LOAD":
         # Load state dict from the disk (make sure it is the same name as above)
-        #state_dict = torch.load("adch_1_model.tar", map_location=torch.device('cpu')) ####LEVA LA CPUU!! TODO
+        #state_dict = torch.load("adch_1_model.tar", map_location=torch.device('cpu')) 
         state_dict = torch.load("adch_model2.0.tar")
 
         # Create a new model and load the state
