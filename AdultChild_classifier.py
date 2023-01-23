@@ -121,14 +121,11 @@ def train_model(model, train_loader, val_loader, criterion, optimizer, num_epoch
         running_loss = 0.0
         i=0
         for inputs, labels in train_loader:
-            if i%20==0:
+            if i%100==0:
                 print(f'------------\ntraining: ..... {i}/{len(train_loader)}')
                 if i!=0:
                     print(f'curr loss: {running_loss/(i*batch_size)}')
             i+=1
-            if i > 500:
-                print("[x] safe loop: BREAKING")
-                break
             inputs = inputs.to(device)
             labels = labels.to(device)
             
@@ -263,7 +260,7 @@ def main():
     # Initialize the criterion (loss function)
     criterion = nn.CrossEntropyLoss()
     # Initialize the optimizer
-    optimizer = optim.Adam(model.parameters(), lr=0.0003)
+    optimizer = optim.Adam(model.parameters(), lr=0.001)
 
     if exec_mode == "TRAIN":
         # Train the model
