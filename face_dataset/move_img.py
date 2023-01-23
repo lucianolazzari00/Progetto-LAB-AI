@@ -1,8 +1,8 @@
 import os
 import random
 
-path = 'UTKFace/train/adults'
-dest = 'BackupData'
+path = 'UTKFace/test/adults'
+dest = 'BackupData_test'
 
 files = os.listdir(path)
 random.shuffle(files)

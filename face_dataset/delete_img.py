@@ -1,6 +1,6 @@
 import os
 
-path = 'UTKFace/train/adults'
+path = 'UTKFace/test/adults'
 
 i=0
 for file_name in os.listdir(path):

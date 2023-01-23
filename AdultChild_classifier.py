@@ -217,8 +217,8 @@ def demo(model):
             output = model(image)
             # Get the class with highest probability
             _, pred = torch.max(output, 1)
-            print(f'[PREDICT]: {pred.cpu().numpy()[0]}')
-            print(f'[CORRECT]: {labels[i]}')
+            print(f'------\n[PREDICT]: {pred.cpu().numpy()[0]}')
+            print(f'[CORRECT]: {labels[i]}\n------')
 
             image = transforms.ToPILImage()(image)
             image.show()
